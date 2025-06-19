@@ -1,7 +1,0 @@
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/intrinsics_gen.dir
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/omp_gen.dir
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/acc_gen.dir
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/RISCVTargetParserTableGen.dir
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/nesia.dir
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/edit_cache.dir
-/home/borje/Documents/CODING/Personal/neSia/build/CMakeFiles/rebuild_cache.dir

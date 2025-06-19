@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/nesia.dir/link.d CMakeFiles/nesia.dir/src/main.cpp.o -o nesia  /usr/lib/libLLVM.so.18.1

@@ -1,0 +1,63 @@
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.slo
+
+# Compiled static libraries
+*.lib
+*.a
+*.la
+
+# Compiled dynamic libraries
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executable files
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# CMake build directories
+/build/
+/cmake-build-*/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+/install_manifest.txt
+
+# CMake generated files
+CTestTestfile.cmake
+Testing/
+*.dir
+
+# LLVM build artifacts
+/llvm-build/
+/llvm-project/build/
+/llvm-project/Release/
+/llvm-project/Debug/
+/llvm-project/*.log
+
+# Clangd index and cache
+.cache/
+.clangd/
+.clangd-index/
+
+# Editor files
+*~
+*.swp
+*.swo
+.DS_Store
+.vscode/
+.idea/
+
+# Other
+*.log
+*.tmp
+*.bak
