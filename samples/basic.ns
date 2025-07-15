@@ -1,2 +1,2 @@
-
-print("Hello World")
+numbers = 42 + 5;
+result = numbers * 2;

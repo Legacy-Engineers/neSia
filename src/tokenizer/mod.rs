@@ -38,9 +38,9 @@ impl Tokenizer {
         current
     }
 
-    fn peek(&self) -> Option<char> {
-        self.src.get(self.pos + 1).copied()
-    }
+    // fn peek(&self) -> Option<char> {
+    //     self.src.get(self.pos + 1).copied()
+    // }
 
     fn is_at_end(&self) -> bool {
         self.pos >= self.src.len()

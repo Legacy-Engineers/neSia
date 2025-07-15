@@ -9,6 +9,13 @@ pub enum TokenType {
     LParen,
     RParen,
     Equal,
+    EqualEqual,        // ==
+    BangEqual,         // !=
+    Greater,           // >
+    GreaterEqual,      // >=
+    Less,              // <
+    LessEqual,         // <=
+    Bang,              // !
     Semicolon,
     EOF,
     Print,
