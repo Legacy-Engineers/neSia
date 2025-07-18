@@ -9,16 +9,23 @@ pub enum TokenType {
     LParen,
     RParen,
     Equal,
-    EqualEqual,        // ==
-    BangEqual,         // !=
-    Greater,           // >
-    GreaterEqual,      // >=
-    Less,              // <
-    LessEqual,         // <=
-    Bang,              // !
+    EqualEqual,   // ==
+    BangEqual,    // !=
+    Greater,      // >
+    GreaterEqual, // >=
+    Less,         // <
+    LessEqual,    // <=
+    Bang,         // !
     Semicolon,
     EOF,
     Print,
+    Function,
+    Class,
+    Let,
+    LBrace,
+    RBrace,
+    Comma,
+
 }
 
 #[derive(Debug, Clone)]

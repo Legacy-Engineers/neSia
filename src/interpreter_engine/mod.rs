@@ -28,6 +28,11 @@ impl Interpreter {
                 println!("{:?}", result);
                 Ok(())
             }
+            Stmt::PrintStmt(expr) => {
+                let val = self.evaluate_expr(expr)?;
+                println!("{:?}", val);
+                Ok(())
+            }
             _ => Err("Unsupported statement type".to_string()),
         }
     }

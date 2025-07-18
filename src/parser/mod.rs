@@ -1,13 +1,12 @@
 pub mod parser_types;
 
-use parser_types::*;
 use crate::tokenizer::token_types::*;
+use parser_types::*;
 
 pub struct Parser {
     tokens: Vec<Token>,
     current: usize,
 }
-
 
 impl Parser {
     fn equality(&mut self) -> Result<Expr, String> {
@@ -114,11 +113,69 @@ impl Parser {
     }
 
     fn statement(&mut self) -> Result<Stmt, String> {
-        if self.match_token(&[TokenType::Identifier("let".into())]) {
+        if self.match_token(&[TokenType::Function]) {
+            self.function_decl()
+        } else if self.match_token(&[TokenType::Identifier("let".into())]) {
             self.var_decl()
+        } else if self.match_token(&[TokenType::Print]) {
+            self.print_stmt()
         } else {
             self.expr_stmt()
         }
+    }
+
+    fn print_stmt(&mut self) -> Result<Stmt, String> {
+        let value = self.expression()?;
+        self.expect(TokenType::Semicolon, "Expected ';' after value")?;
+        Ok(Stmt::PrintStmt(value))
+    }
+
+    fn function_decl(&mut self) -> Result<Stmt, String> {
+        // Match `func`
+        self.expect(TokenType::Function, "Expected 'func' keyword")?;
+
+        // Function name
+        let name = if let TokenType::Identifier(ref name) = self.current_token().token_type {
+            name.clone()
+        } else {
+            return Err("Expected function name".to_string());
+        };
+        self.advance();
+
+        // Expect opening (
+        self.expect(TokenType::LParen, "Expected '(' after function name")?;
+
+        // Parse parameters (if any)
+        let mut params = Vec::new();
+        if !self.check(&TokenType::RParen) {
+            loop {
+                if let TokenType::Identifier(ref name) = self.current_token().token_type {
+                    params.push(name.clone());
+                    self.advance();
+                } else {
+                    return Err("Expected parameter name".to_string());
+                }
+
+                if !self.match_token(&[TokenType::Comma]) {
+                    break;
+                }
+            }
+        }
+
+        // ❗ This is the one you may have missed:
+        self.expect(TokenType::RParen, "Expected ')' after parameters")?;
+
+        // Expect {
+        self.expect(TokenType::LBrace, "Expected '{' before function body")?;
+
+        let mut body = Vec::new();
+        while !self.check(&TokenType::RBrace) && !self.is_at_end() {
+            body.push(self.statement()?);
+        }
+
+        self.expect(TokenType::RBrace, "Expected '}' after function body")?;
+
+        Ok(Stmt::FunctionDecl { name, params, body })
     }
 
     fn var_decl(&mut self) -> Result<Stmt, String> {
@@ -132,7 +189,10 @@ impl Parser {
         self.expect(TokenType::Equal, "Expected '=' after variable name")?;
 
         let value = self.expression()?;
-        self.expect(TokenType::Semicolon, "Expected ';' after variable declaration")?;
+        self.expect(
+            TokenType::Semicolon,
+            "Expected ';' after variable declaration",
+        )?;
 
         Ok(Stmt::VarDecl { name, value })
     }
@@ -152,7 +212,9 @@ impl Parser {
     }
 
     fn current_token(&self) -> &Token {
-        self.tokens.get(self.current).unwrap_or(&self.tokens.last().unwrap())
+        self.tokens
+            .get(self.current)
+            .unwrap_or(&self.tokens.last().unwrap())
     }
 
     fn advance(&mut self) -> &Token {

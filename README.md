@@ -1,8 +1,10 @@
 # neSia Programming Language
 
-This is a programming language designed for me to learn low system programming concepts and improve my understanding of computer architecture.
+**neSia** is a small interpreted programming language I'm building to deepen my understanding of low-level system concepts, interpreters, and computer architecture.
 
-My Implementation guide: (IMPL GUIDE)[/implementation_guide.md]
+It's heavily inspired by [Crafting Interpreters](https://craftinginterpreters.com), but I'm putting my own spin on the design and implementation.
+
+## 🚀 Run a Sample Program
 
 ```bash
 cargo run samples/basic.ns

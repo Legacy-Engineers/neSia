@@ -1,7 +1,7 @@
 pub mod token_types;
 
-use token_types::TokenType;
 use token_types::Token;
+use token_types::TokenType;
 
 pub struct Tokenizer {
     src: Vec<char>,
@@ -19,7 +19,7 @@ impl Tokenizer {
             col: 1,
         }
     }
-    
+
     fn current(&self) -> Option<char> {
         self.src.get(self.pos).copied()
     }
@@ -38,14 +38,14 @@ impl Tokenizer {
         current
     }
 
-    // fn peek(&self) -> Option<char> {
-    //     self.src.get(self.pos + 1).copied()
-    // }
+    fn peek(&self) -> Option<char> {
+        self.src.get(self.pos + 1).copied()
+    }
 
     fn is_at_end(&self) -> bool {
         self.pos >= self.src.len()
     }
-    
+
     pub fn tokenize(&mut self) -> Vec<Token> {
         let mut tokens = Vec::new();
 
@@ -81,14 +81,35 @@ impl Tokenizer {
                     tokens.push(self.make_simple_token(TokenType::RParen));
                     self.advance();
                 }
-                '=' => {
-                    tokens.push(self.make_simple_token(TokenType::Equal));
-                    self.advance();
-                }
                 ';' => {
                     tokens.push(self.make_simple_token(TokenType::Semicolon));
                     self.advance();
                 }
+                '{' => {
+                    tokens.push(self.make_simple_token(TokenType::LBrace));
+                    self.advance();
+                }
+                '}' => {
+                    tokens.push(self.make_simple_token(TokenType::RBrace));
+                    self.advance();
+                }
+                '=' => {
+                    if self.peek() == Some('=') {
+                        self.advance();
+                        self.advance();
+                        tokens.push(self.make_simple_token(TokenType::EqualEqual));
+                    } else {
+                        tokens.push(self.make_simple_token(TokenType::Equal));
+                        self.advance();
+                    }
+                }
+                '"' => {
+                    tokens.push(self.string_token());
+                    self.advance();
+                }
+                ',' => tokens.push(self.make_simple_token(TokenType::Comma)),
+
+
                 c if c.is_whitespace() => {
                     self.advance();
                 }
@@ -96,7 +117,10 @@ impl Tokenizer {
                     tokens.push(self.identifier_token());
                 }
                 _ => {
-                    panic!("Unexpected character '{}' at line {}, col {}", c, self.line, start_col);
+                    panic!(
+                        "Unexpected character '{}' at line {}, col {}",
+                        c, self.line, start_col
+                    );
                 }
             }
         }
@@ -130,10 +154,45 @@ impl Tokenizer {
             }
         }
 
-        let value: f64 = self.src[start..self.pos].iter().collect::<String>().parse().unwrap();
+        let value: f64 = self.src[start..self.pos]
+            .iter()
+            .collect::<String>()
+            .parse()
+            .unwrap();
 
         Token {
             token_type: TokenType::Number(value),
+            line: self.line,
+            column: start_col,
+        }
+    }
+
+    fn string_token(&mut self) -> Token {
+        self.advance(); // Skip the opening "
+
+        let start_col = self.col;
+        let mut value = String::new();
+
+        while let Some(c) = self.current() {
+            if c == '"' {
+                break;
+            } else {
+                value.push(c);
+                self.advance();
+            }
+        }
+
+        if self.current() != Some('"') {
+            panic!(
+                "Unterminated string at line {}, col {}",
+                self.line, self.col
+            );
+        }
+
+        self.advance(); // Skip the closing "
+
+        Token {
+            token_type: TokenType::Identifier(value), // Or define TokenType::StringLiteral(String)
             line: self.line,
             column: start_col,
         }
@@ -152,9 +211,16 @@ impl Tokenizer {
         }
 
         let ident = self.src[start..self.pos].iter().collect::<String>();
+        let token_type = match ident.as_str() {
+            "func" => TokenType::Function,
+            "print" => TokenType::Print,
+            "class" => TokenType::Class,
+            "let" => TokenType::Let,
+            _ => TokenType::Identifier(ident),
+        };
 
         Token {
-            token_type: TokenType::Identifier(ident),
+            token_type,
             line: self.line,
             column: start_col,
         }

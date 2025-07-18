@@ -19,6 +19,12 @@ pub enum Stmt {
         name: String,
         value: Expr,
     },
+    PrintStmt(Expr),
+    FunctionDecl {
+        name: String,
+        params: Vec<String>,
+        body: Vec<Stmt>,
+    },
 }
 
 
