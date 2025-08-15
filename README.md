@@ -4,7 +4,7 @@
 
 It's heavily inspired by [Crafting Interpreters](https://craftinginterpreters.com), but I'm putting my own spin on the design and implementation.
 
-## 🚀 Run a Sample Program
+## Run a Sample Program
 
 ```bash
 cargo run samples/basic.ns
