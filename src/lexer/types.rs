@@ -2,9 +2,11 @@
 pub enum Token {
     Func,
     Extern,
-    Delimiter, // ';' character
+    Delimiter, // ';'
     OpeningParenthesis,
     ClosingParenthesis,
+    OpeningBrace, // added
+    ClosingBrace, // added
     Comma,
     Ident(String),
     Number(f64),
