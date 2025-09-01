@@ -83,18 +83,26 @@ impl Parser {
                 self.advance();
                 Ok(Expr::Identifier(ident))
             }
+            TokenType::StringLiteral(s) => {
+                let val = s.clone();
+                self.advance();
+                Ok(Expr::StringLiteral(val)) // <- you'll need to add this to Expr
+            }
             TokenType::LParen => {
                 self.advance();
                 let expr = self.expression()?;
                 self.expect(TokenType::RParen, "Expected ')'")?;
                 Ok(expr)
             }
-            _ => Err(format!(
-                "Unexpected token {:?} at line {}, col {}",
-                self.current_token().token_type,
-                self.current_token().line,
-                self.current_token().column
-            )),
+            _ =>
+                Err(
+                    format!(
+                        "Unexpected token {:?} at line {}, col {}",
+                        self.current_token().token_type,
+                        self.current_token().line,
+                        self.current_token().column
+                    )
+                ),
         }
     }
 
@@ -175,7 +183,7 @@ impl Parser {
 
         self.expect(TokenType::RBrace, "Expected '}' after function body")?;
 
-        Ok(Stmt::FunctionDecl { name, params, body })
+        Ok(Stmt::FunctionStmt { name, params, body })
     }
 
     fn var_decl(&mut self) -> Result<Stmt, String> {
@@ -189,10 +197,7 @@ impl Parser {
         self.expect(TokenType::Equal, "Expected '=' after variable name")?;
 
         let value = self.expression()?;
-        self.expect(
-            TokenType::Semicolon,
-            "Expected ';' after variable declaration",
-        )?;
+        self.expect(TokenType::Semicolon, "Expected ';' after variable declaration")?;
 
         Ok(Stmt::VarDecl { name, value })
     }
@@ -212,9 +217,7 @@ impl Parser {
     }
 
     fn current_token(&self) -> &Token {
-        self.tokens
-            .get(self.current)
-            .unwrap_or(&self.tokens.last().unwrap())
+        self.tokens.get(self.current).unwrap_or(&self.tokens.last().unwrap())
     }
 
     fn advance(&mut self) -> &Token {
@@ -247,12 +250,14 @@ impl Parser {
             self.advance();
             Ok(())
         } else {
-            Err(format!(
-                "{} at line {}, column {}",
-                message,
-                self.current_token().line,
-                self.current_token().column
-            ))
+            Err(
+                format!(
+                    "{} at line {}, column {}",
+                    message,
+                    self.current_token().line,
+                    self.current_token().column
+                )
+            )
         }
     }
 }

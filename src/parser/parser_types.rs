@@ -4,13 +4,17 @@ use crate::tokenizer::token_types::TokenType;
 pub enum Expr {
     Number(f64),
     Identifier(String),
+    StringLiteral(String),
     Binary {
         left: Box<Expr>,
         op: TokenType,
         right: Box<Expr>,
     },
+    Call {
+        callee: Box<Expr>,
+        arguments: Vec<Expr>,
+    },
 }
-
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
@@ -20,11 +24,9 @@ pub enum Stmt {
         value: Expr,
     },
     PrintStmt(Expr),
-    FunctionDecl {
+    FunctionStmt {
         name: String,
         params: Vec<String>,
         body: Vec<Stmt>,
     },
 }
-
-

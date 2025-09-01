@@ -50,8 +50,8 @@ impl Tokenizer {
         let mut tokens = Vec::new();
 
         while !self.is_at_end() {
-            let c = self.current().unwrap();
-            let start_col = self.col;
+            let c: char = self.current().unwrap();
+            let start_col: usize = self.col;
 
             match c {
                 '0'..='9' => {
@@ -109,6 +109,9 @@ impl Tokenizer {
                 }
                 ',' => tokens.push(self.make_simple_token(TokenType::Comma)),
 
+                '"' | '\'' => {
+                    tokens.push(self.string_token());
+                }
 
                 c if c.is_whitespace() => {
                     self.advance();
@@ -117,9 +120,11 @@ impl Tokenizer {
                     tokens.push(self.identifier_token());
                 }
                 _ => {
-                    panic!(
+                    println!(
                         "Unexpected character '{}' at line {}, col {}",
-                        c, self.line, start_col
+                        c,
+                        self.line,
+                        start_col
                     );
                 }
             }
@@ -154,11 +159,7 @@ impl Tokenizer {
             }
         }
 
-        let value: f64 = self.src[start..self.pos]
-            .iter()
-            .collect::<String>()
-            .parse()
-            .unwrap();
+        let value: f64 = self.src[start..self.pos].iter().collect::<String>().parse().unwrap();
 
         Token {
             token_type: TokenType::Number(value),
@@ -168,13 +169,14 @@ impl Tokenizer {
     }
 
     fn string_token(&mut self) -> Token {
-        self.advance(); // Skip the opening "
+        let quote_char = self.current().unwrap(); // either " or '
+        self.advance(); // skip opening quote
 
         let start_col = self.col;
         let mut value = String::new();
 
         while let Some(c) = self.current() {
-            if c == '"' {
+            if c == quote_char {
                 break;
             } else {
                 value.push(c);
@@ -182,17 +184,14 @@ impl Tokenizer {
             }
         }
 
-        if self.current() != Some('"') {
-            panic!(
-                "Unterminated string at line {}, col {}",
-                self.line, self.col
-            );
+        if self.current() != Some(quote_char) {
+            eprintln!("Unterminated string at line {}, col {}", self.line, self.col);
         }
 
-        self.advance(); // Skip the closing "
+        self.advance(); // skip closing quote
 
         Token {
-            token_type: TokenType::Identifier(value), // Or define TokenType::StringLiteral(String)
+            token_type: TokenType::StringLiteral(value),
             line: self.line,
             column: start_col,
         }
